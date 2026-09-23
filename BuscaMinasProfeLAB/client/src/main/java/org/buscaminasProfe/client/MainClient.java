@@ -154,10 +154,34 @@ public class MainClient {
                     }
                     break;
                 case 4:
+                    try {
+                        Map<String, String> dataGet = new HashMap<>();
+                        Request showBoardStatus= new Request("GET_BOARD",dataGet );
+                        Response respShowBoardStatus = client.sendRequest(host, port, showBoardStatus);
+
+                        Cell[][] boardShowBoard = client.extractBoard(respShowBoardStatus);
+                        printBoard(boardShowBoard);
+
+                    }catch (Exception e) {
+                        System.out.println("Error al conectar con el servidor: " + e.getMessage());
+                    }
                     break;
                 case 5:
+                    try{
+                        Map<String, String> dataShow = new HashMap<>();
+                        Request showALLBoard= new Request("SOW_ALL",dataShow );
+
+                        Response respShowALLboard= client.sendRequest(host,port, showALLBoard);
+
+                        Cell[][] boardShowAllBoard = client.extractBoard(respShowALLboard);
+                        printBoard(boardShowAllBoard);
+
+                    }catch (Exception e) {
+                        System.out.println("Error al conectar con el servidor: " + e.getMessage());
+                    }
                     break;
                 case 6:
+                    System.out.println("Chao que este bieeen!!");
                     flag = false;
                     break;
                 default:
