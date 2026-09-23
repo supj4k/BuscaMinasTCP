@@ -92,7 +92,7 @@ public class TCPController {
                 Map<String, String> data = rq.data;
                 Response response = new Response();
                 response.data = new HashMap<>();
-                switch (rq.action) {
+                switch (    rq.action) {
                     case "SELECT_CELL":
                         int i = Integer.parseInt(data.get("i"));
                         int j = Integer.parseInt(data.get("j"));
