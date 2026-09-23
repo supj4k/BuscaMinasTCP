@@ -128,6 +128,30 @@ public class MainClient {
                     }
                     break;
                 case 3:
+                    System.out.println("Escriba una coordenada para marcar una celda una celda:");
+                    System.out.print("Fila: ");
+                    int f = sc.nextInt();
+                    System.out.print("Columna: ");
+                    int c = sc.nextInt();
+
+                    try {
+                        // Las llaves DEBEN ser "i" y "j" (asi las lee el server)
+                        Map<String, String> reqMarcar = new HashMap<>();
+                        reqMarcar.put("i", String.valueOf(f));
+                        reqMarcar.put("j", String.valueOf(c));
+
+                        Request reqSel = new Request("MARK_CELL", reqMarcar);
+                        Response respSel = client.sendRequest(host, port, reqSel);
+
+                        // Dibujamos el tablero que devolvio el server
+                        Cell[][] boardSel = client.extractBoard(respSel);
+                        printBoard(boardSel);
+
+
+                    } catch (Exception e) {
+                        // Solo avisamos, NO lanzamos excepcion (para no matar el menu)
+                        System.out.println("Error al conectar con el servidor: " + e.getMessage());
+                    }
                     break;
                 case 4:
                     break;
