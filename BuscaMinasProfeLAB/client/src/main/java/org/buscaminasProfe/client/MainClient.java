@@ -90,6 +90,42 @@ public class MainClient {
 
                     break;
                 case 2:
+
+                    System.out.println("Escriba una coordenada para destapar una celda:");
+                    System.out.print("Fila: ");
+                    int filas = sc.nextInt();
+                    System.out.print("Columna: ");
+                    int columnas = sc.nextInt();
+
+                    try {
+                        // Las llaves DEBEN ser "i" y "j" (asi las lee el server)
+                        Map<String, String> dataDestapar = new HashMap<>();
+                        dataDestapar.put("i", String.valueOf(filas));
+                        dataDestapar.put("j", String.valueOf(columnas));
+
+                        Request reqSel = new Request("SELECT_CELL", dataDestapar);
+                        Response respSel = client.sendRequest(host, port, reqSel);
+
+                        // Dibujamos el tablero que devolvio el server
+                        Cell[][] boardSel = client.extractBoard(respSel);
+                        printBoard(boardSel);
+
+                        // Leemos win y gameEnd (vienen como Object; ojo con el null)
+                        Object winObj = respSel.data.get("win");
+                        Object endObj = respSel.data.get("gameEnd");
+                        boolean win = winObj != null && (Boolean) winObj;
+                        boolean gameEnd = endObj != null && (Boolean) endObj;
+
+                        // Fin de partida
+                        if (gameEnd && win) {
+                            System.out.println("¡GANASTE! Destapaste todo sin pisar minas.");
+                        } else if (gameEnd && !win) {
+                            System.out.println("¡BOOM! Pisaste una mina. Perdiste.");
+                        }
+                    } catch (Exception e) {
+                        // Solo avisamos, NO lanzamos excepcion (para no matar el menu)
+                        System.out.println("Error al conectar con el servidor: " + e.getMessage());
+                    }
                     break;
                 case 3:
                     break;
