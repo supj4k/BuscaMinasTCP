@@ -1,64 +1,30 @@
 package org.galaga;
 
 import org.galaga.Controllers.TCPController;
-import org.galaga.model.BoardGame;
 import org.galaga.services.ServicesImpl;
-
-import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
+        // Capa de servicios: internamente crea el BoardGame
         ServicesImpl serv = new ServicesImpl();
-        new Thread(() -> apply(serv.getGame())).start();
-        // TCPController controller = new TCPController(serv);
-        // controller.startService();
 
-        TCPController iceController = new TCPController(serv);
-        iceController.startService();
-    }
-    public static void apply(BoardGame bg) {
+        // Puerto por defecto (coincide con el constructor de TCPController)
+        int port = 12345;
 
-        int n = bg.getBoard().length;
-        int m = bg.getBoard()[0].length;
-        System.out.println("LandMines on the table: "+ bg.getMines());
-//        bg.showAll(true);
-//        bg.printBoard();
-//        bg.showAll(false);
-        bg.printBoard();
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("select a cell (i,j) between 0 and "+(n-1)+","+(m-1)+" to play, or (-1,-1) to exit");
-        System.out.println("you have "+bg.getMines()+" mines to avoid");
-        System.out.println("use the format: <operation> <i> <j>");
-        System.out.println("operation 1: select cell, operation 2: mark/unmark cell");
-        int operation = scanner.nextInt();
-        int i = scanner.nextInt();
-        int j = scanner.nextInt();
-        do{
+        // Si se paso un puerto por linea de comandos, lo usamos.
+        // Ej: .\gradlew :server:run --args="9000"
+        if (args.length > 0) {
             try {
-                if(operation==2){
-                    bg.markCell(i,j);
-                }else if(operation ==1){
-                    boolean r = bg.selectCell(i, j);
-                    if (r) {
-                        System.out.println("you win, Congratulations");
-                        break;
-                    }
-                }
-                bg.printBoard();
-            }catch (RuntimeException e){
-                System.out.println(e.getMessage());
-                break;
+                port = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                System.out.println("Puerto invalido, usando 12345 por defecto.");
             }
-            operation = scanner.nextInt();
-            i = scanner.nextInt();
-            j = scanner.nextInt();
-        }while (i>=0 && j>=0);
-        bg.showAll(true);
-        bg.printBoard();
-        System.out.println("exit");
-        scanner.close();
+        }
 
+        // Arranca el servidor TCP en el puerto elegido.
+        // Usa el constructor de dos parametros (services, port).
+        TCPController controller = new TCPController(serv, port);
+        controller.startService();
     }
 }
